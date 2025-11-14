@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查询历史 - Taraxa区块链账户查询器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a365d 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #319795, #ed8936);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .network-bg {
+            background-image: url('resources/network-bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .history-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .empty-state {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="network-bg">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="resources/taraxa-logo.png" alt="Taraxa" class="h-8 w-auto mr-3">
+                    <h1 class="text-xl font-bold text-white">Taraxa查询器</h1>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-white hover:text-teal-300 transition-colors">首页</a>
+                    <a href="about.html" class="text-white hover:text-teal-300 transition-colors">关于</a>
+                    <a href="history.html" class="text-teal-300 font-medium">历史记录</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden glass-effect">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="block px-3 py-2 text-white hover:text-teal-300">首页</a>
+                <a href="about.html" class="block px-3 py-2 text-white hover:text-teal-300">关于</a>
+                <a href="history.html" class="block px-3 py-2 text-teal-300 font-medium">历史记录</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-20 pb-12">
+        <!-- Hero区域 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 floating-animation">
+                        查询历史记录
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                        查看您的所有查询记录，轻松管理您的Taraxa账户信息
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 统计概览 -->
+        <section class="py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                    <div class="glass-effect rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold gradient-text mb-2" id="total-queries">0</div>
+                        <div class="text-gray-300">总查询次数</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold gradient-text mb-2" id="unique-addresses">0</div>
+                        <div class="text-gray-300">查询地址数</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold gradient-text mb-2" id="avg-balance">0.00</div>
+                        <div class="text-gray-300">平均余额 (TARA)</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold gradient-text mb-2" id="last-query">从未</div>
+                        <div class="text-gray-300">最后查询</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图表展示 -->
+        <section class="py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-effect rounded-2xl p-8 mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-6 text-center">查询趋势分析</h2>
+                    <div id="history-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 历史记录列表 -->
+        <section class="py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-effect rounded-2xl p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold text-white">查询记录</h2>
+                        <div class="flex space-x-4">
+                            <button id="export-btn" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                导出数据
+                            </button>
+                            <button id="clear-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                清空记录
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 搜索和筛选 -->
+                    <div class="mb-6">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <input 
+                                    type="text" 
+                                    id="search-input" 
+                                    placeholder="搜索地址..."
+                                    class="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-teal-400 focus:outline-none"
+                                >
+                            </div>
+                            <select id="sort-select" class="px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-teal-400 focus:outline-none">
+                                <option value="time-desc">时间降序</option>
+                                <option value="time-asc">时间升序</option>
+                                <option value="balance-desc">余额降序</option>
+                                <option value="balance-asc">余额升序</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 历史记录列表 -->
+                    <div id="history-list">
+                        <!-- 历史记录将在这里动态生成 -->
+                    </div>
+
+                    <!-- 空状态 -->
+                    <div id="empty-state" class="empty-state text-center py-12 hidden">
+                        <div class="text-6xl mb-4">📋</div>
+                        <h3 class="text-xl font-bold text-white mb-2">暂无查询记录</h3>
+                        <p class="text-gray-400 mb-6">开始查询Taraxa账户余额，记录将在这里显示</p>
+                        <a href="index.html" class="inline-block bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg transition-colors">
+                            开始查询
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="glass-effect py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-4">
+                    <img src="resources/taraxa-logo.png" alt="Taraxa" class="h-6 w-auto mr-2">
+                    <span class="text-white font-bold">Taraxa区块链查询器</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    © 2024 Taraxa区块链账户查询器. 为Taraxa生态系统提供专业查询服务
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 历史记录管理类
+        class HistoryManager {
+            constructor() {
+                this.history = this.loadHistory();
+                this.filteredHistory = [...this.history];
+                this.chart = null;
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateStatistics();
+                this.renderHistoryList();
+                this.initChart();
+                this.animateElements();
+            }
+
+            setupEventListeners() {
+                // 移动端菜单
+                document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                    document.getElementById('mobile-menu').classList.toggle('hidden');
+                });
+
+                // 搜索功能
+                document.getElementById('search-input').addEventListener('input', (e) => {
+                    this.filterHistory(e.target.value);
+                });
+
+                // 排序功能
+                document.getElementById('sort-select').addEventListener('change', (e) => {
+                    this.sortHistory(e.target.value);
+                });
+
+                // 导出功能
+                document.getElementById('export-btn').addEventListener('click', () => {
+                    this.exportHistory();
+                });
+
+                // 清空功能
+                document.getElementById('clear-btn').addEventListener('click', () => {
+                    this.clearHistory();
+                });
+
+                // 历史记录点击
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('requery-btn')) {
+                        const address = e.target.dataset.address;
+                        this.requeryAddress(address);
+                    }
+                    if (e.target.classList.contains('copy-btn')) {
+                        const address = e.target.dataset.address;
+                        this.copyAddress(address);
+                    }
+                });
+            }
+
+            loadHistory() {
+                const saved = localStorage.getItem('taraxa-query-history');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            saveHistory() {
+                localStorage.setItem('taraxa-query-history', JSON.stringify(this.history));
+            }
+
+            updateStatistics() {
+                const totalQueries = this.history.length;
+                const uniqueAddresses = new Set(this.history.map(item => item.address)).size;
+                const avgBalance = totalQueries > 0 ? 
+                    this.history.reduce((sum, item) => sum + item.balance, 0) / totalQueries : 0;
+                const lastQuery = totalQueries > 0 ? 
+                    new Date(this.history[0].timestamp).toLocaleDateString() : '从未';
+
+                document.getElementById('total-queries').textContent = totalQueries;
+                document.getElementById('unique-addresses').textContent = uniqueAddresses;
+                document.getElementById('avg-balance').textContent = avgBalance.toFixed(2);
+                document.getElementById('last-query').textContent = lastQuery;
+            }
+
+            filterHistory(searchTerm) {
+                if (!searchTerm.trim()) {
+                    this.filteredHistory = [...this.history];
+                } else {
+                    this.filteredHistory = this.history.filter(item =>
+                        item.address.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                }
+                this.renderHistoryList();
+            }
+
+            sortHistory(sortType) {
+                switch (sortType) {
+                    case 'time-desc':
+                        this.filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        break;
+                    case 'time-asc':
+                        this.filteredHistory.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                        break;
+                    case 'balance-desc':
+                        this.filteredHistory.sort((a, b) => b.balance - a.balance);
+                        break;
+                    case 'balance-asc':
+                        this.filteredHistory.sort((a, b) => a.balance - b.balance);
+                        break;
+                }
+                this.renderHistoryList();
+            }
+
+            renderHistoryList() {
+                const container = document.getElementById('history-list');
+                const emptyState = document.getElementById('empty-state');
+
+                if (this.filteredHistory.length === 0) {
+                    container.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                
+                container.innerHTML = this.filteredHistory.map((item, index) => `
+                    <div class="history-card glass-effect rounded-lg p-6 mb-4" data-index="${index}">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between">
+                            <div class="flex-1 mb-4 md:mb-0">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-3 h-3 bg-teal-400 rounded-full mr-3"></div>
+                                    <span class="text-sm text-gray-400">${new Date(item.timestamp).toLocaleString()}</span>
+                                </div>
+                                <div class="text-white font-mono text-lg mb-2 break-all">${item.address}</div>
+                                <div class="flex items-center">
+                                    <span class="text-2xl font-bold gradient-text">${item.balance.toFixed(6)}</span>
+                                    <span class="text-teal-400 ml-2">TARA</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button class="requery-btn bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg transition-colors" data-address="${item.address}">
+                                    重新查询
+                                </button>
+                                <button class="copy-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors" data-address="${item.address}">
+                                    复制地址
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            initChart() {
+                const chartContainer = document.getElementById('history-chart');
+                this.chart = echarts.init(chartContainer);
+
+                if (this.history.length === 0) {
+                    this.chart.setOption({
+                        title: {
+                            text: '暂无数据',
+                            left: 'center',
+                            top: 'middle',
+                            textStyle: {
+                                color: '#9CA3AF',
+                                fontSize: 18
+                            }
+                        }
+                    });
+                    return;
+                }
+
+                // 准备图表数据
+                const dailyData = this.groupByDay(this.history);
+                const dates = Object.keys(dailyData).sort();
+                const queryCounts = dates.map(date => dailyData[date].count);
+                const avgBalances = dates.map(date => dailyData[date].avgBalance);
+
+                const option = {
+                    backgroundColor: 'transparent',
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        borderColor: '#319795',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    legend: {
+                        data: ['查询次数', '平均余额'],
+                        textStyle: {
+                            color: '#9CA3AF'
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: dates,
+                        axisLine: {
+                            lineStyle: {
+                                color: '#4B5563'
+                            }
+                        },
+                        axisLabel: {
+                            color: '#9CA3AF'
+                        }
+                    },
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '查询次数',
+                            position: 'left',
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#319795'
+                                }
+                            },
+                            axisLabel: {
+                                color: '#9CA3AF'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '平均余额 (TARA)',
+                            position: 'right',
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#ed8936'
+                                }
+                            },
+                            axisLabel: {
+                                color: '#9CA3AF'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '查询次数',
+                            type: 'bar',
+                            data: queryCounts,
+                            itemStyle: {
+                                color: '#319795'
+                            }
+                        },
+                        {
+                            name: '平均余额',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: avgBalances,
+                            lineStyle: {
+                                color: '#ed8936'
+                            },
+                            itemStyle: {
+                                color: '#ed8936'
+                            }
+                        }
+                    ]
+                };
+
+                this.chart.setOption(option);
+
+                // 响应窗口大小变化
+                window.addEventListener('resize', () => {
+                    this.chart.resize();
+                });
+            }
+
+            groupByDay(history) {
+                const groups = {};
+                
+                history.forEach(item => {
+                    const date = new Date(item.timestamp).toISOString().split('T')[0];
+                    if (!groups[date]) {
+                        groups[date] = {
+                            count: 0,
+                            totalBalance: 0,
+                            avgBalance: 0
+                        };
+                    }
+                    groups[date].count++;
+                    groups[date].totalBalance += item.balance;
+                    groups[date].avgBalance = groups[date].totalBalance / groups[date].count;
+                });
+
+                return groups;
+            }
+
+            exportHistory() {
+                if (this.history.length === 0) {
+                    this.showMessage('暂无数据可导出', 'warning');
+                    return;
+                }
+
+                const csvContent = this.convertToCSV(this.history);
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `taraxa-query-history-${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    this.showMessage('数据导出成功', 'success');
+                }
+            }
+
+            convertToCSV(history) {
+                const headers = ['查询时间', '钱包地址', '余额 (TARA)'];
+                const rows = history.map(item => [
+                    new Date(item.timestamp).toLocaleString(),
+                    item.address,
+                    item.balance.toFixed(6)
+                ]);
+
+                return [headers, ...rows].map(row => row.join(',')).join('\n');
+            }
+
+            clearHistory() {
+                if (this.history.length === 0) {
+                    this.showMessage('暂无记录可清空', 'warning');
+                    return;
+                }
+
+                if (confirm('确定要清空所有查询记录吗？此操作不可恢复。')) {
+                    this.history = [];
+                    this.filteredHistory = [];
+                    this.saveHistory();
+                    this.updateStatistics();
+                    this.renderHistoryList();
+                    this.initChart();
+                    this.showMessage('历史记录已清空', 'success');
+                }
+            }
+
+            requeryAddress(address) {
+                // 跳转到首页并填充地址
+                localStorage.setItem('requery-address', address);
+                window.location.href = 'index.html';
+            }
+
+            async copyAddress(address) {
+                try {
+                    await navigator.clipboard.writeText(address);
+                    this.showMessage('地址已复制到剪贴板', 'success');
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    this.showMessage('复制失败', 'error');
+                }
+            }
+
+            showMessage(message, type = 'info') {
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    warning: 'bg-yellow-500',
+                    info: 'bg-blue-500'
+                };
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `fixed top-20 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+                messageDiv.textContent = message;
+                
+                document.body.appendChild(messageDiv);
+                
+                setTimeout(() => {
+                    messageDiv.classList.remove('translate-x-full');
+                }, 100);
+                
+                setTimeout(() => {
+                    messageDiv.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        document.body.removeChild(messageDiv);
+                    }, 300);
+                }, 3000);
+            }
+
+            animateElements() {
+                const cards = document.querySelectorAll('.glass-effect');
+                cards.forEach((card, index) => {
+                    anime({
+                        targets: card,
+                        translateY: [50, 0],
+                        opacity: [0, 1],
+                        duration: 800,
+                        delay: index * 100,
+                        easing: 'easeOutQuart'
+                    });
+                });
+            }
+        }
+
+        // 初始化历史记录管理器
+        document.addEventListener('DOMContentLoaded', () => {
+            window.historyManager = new HistoryManager();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能测试 - Taraxa区块链账户查询器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a365d 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-pass {
+            background-color: rgba(72, 187, 120, 0.2);
+            border-color: #48bb78;
+        }
+        
+        .test-fail {
+            background-color: rgba(245, 101, 101, 0.2);
+            border-color: #f56565;
+        }
+        
+        .test-running {
+            background-color: rgba(237, 137, 54, 0.2);
+            border-color: #ed8936;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl p-8 max-w-2xl w-full">
+            <h1 class="text-3xl font-bold text-white mb-8 text-center">功能测试</h1>
+            
+            <div class="space-y-4" id="test-results">
+                <!-- 测试结果将在这里显示 -->
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button id="run-tests" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg transition-colors">
+                    运行测试
+                </button>
+                <a href="index.html" class="inline-block ml-4 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors">
+                    返回首页
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TestRunner {
+            constructor() {
+                this.tests = [
+                    { name: '地址格式验证', fn: this.testAddressValidation },
+                    { name: 'RPC连接测试', fn: this.testRPCConnection },
+                    { name: '余额查询测试', fn: this.testBalanceQuery },
+                    { name: '本地存储测试', fn: this.testLocalStorage },
+                    { name: '动画效果测试', fn: this.testAnimations }
+                ];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('run-tests').addEventListener('click', () => {
+                    this.runAllTests();
+                });
+                this.displayTestList();
+            }
+
+            displayTestList() {
+                const container = document.getElementById('test-results');
+                container.innerHTML = this.tests.map((test, index) => `
+                    <div class="test-item glass-effect rounded-lg p-4 border-2" data-test="${index}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-white font-medium">${test.name}</span>
+                            <span class="test-status text-gray-400">等待执行</span>
+                        </div>
+                        <div class="test-details text-gray-300 text-sm mt-2 hidden"></div>
+                    </div>
+                `).join('');
+            }
+
+            async runAllTests() {
+                const button = document.getElementById('run-tests');
+                button.disabled = true;
+                button.textContent = '测试中...';
+
+                for (let i = 0; i < this.tests.length; i++) {
+                    await this.runTest(i);
+                    await new Promise(resolve => setTimeout(resolve, 500)); // 延迟显示
+                }
+
+                button.disabled = false;
+                button.textContent = '重新测试';
+                this.showSummary();
+            }
+
+            async runTest(index) {
+                const testItem = document.querySelector(`[data-test="${index}"]`);
+                const statusElement = testItem.querySelector('.test-status');
+                const detailsElement = testItem.querySelector('.test-details');
+
+                // 更新状态为运行中
+                testItem.classList.add('test-running');
+                statusElement.textContent = '运行中...';
+                statusElement.className = 'test-status text-orange-300';
+
+                try {
+                    const result = await this.tests[index].fn.call(this);
+                    
+                    // 更新状态为通过
+                    testItem.classList.remove('test-running');
+                    testItem.classList.add('test-pass');
+                    statusElement.textContent = '通过';
+                    statusElement.className = 'test-status text-green-300';
+                    detailsElement.textContent = result.message || '测试通过';
+                    detailsElement.classList.remove('hidden');
+
+                } catch (error) {
+                    // 更新状态为失败
+                    testItem.classList.remove('test-running');
+                    testItem.classList.add('test-fail');
+                    statusElement.textContent = '失败';
+                    statusElement.className = 'test-status text-red-300';
+                    detailsElement.textContent = error.message || '测试失败';
+                    detailsElement.classList.remove('hidden');
+                }
+            }
+
+            // 测试函数
+            async testAddressValidation() {
+                const validAddresses = [
+                    '0x742d35Cc6634C0532925a3b8D4C0C1e9C6d5b7e9',
+                    '0x8ba1f109551bD432803012645Hac136c22C501e'
+                ];
+                const invalidAddresses = [
+                    '0x123',
+                    'invalid-address',
+                    '0xGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG'
+                ];
+
+                const addressRegex = /^0x[a-fA-F0-9]{40}$/;
+
+                for (const addr of validAddresses) {
+                    if (!addressRegex.test(addr)) {
+                        throw new Error(`有效地址验证失败: ${addr}`);
+                    }
+                }
+
+                for (const addr of invalidAddresses) {
+                    if (addressRegex.test(addr)) {
+                        throw new Error(`无效地址验证失败: ${addr}`);
+                    }
+                }
+
+                return { message: '地址格式验证功能正常' };
+            }
+
+            async testRPCConnection() {
+                const rpcEndpoint = 'https://rpc.mainnet.taraxa.io';
+                
+                try {
+                    const response = await fetch(rpcEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: 'eth_blockNumber',
+                            params: [],
+                            id: 1
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (!data.result || !data.result.startsWith('0x')) {
+                        throw new Error('无效的响应格式');
+                    }
+
+                    const blockNumber = parseInt(data.result, 16);
+                    return { message: `RPC连接正常，当前区块高度: ${blockNumber}` };
+
+                } catch (error) {
+                    throw new Error(`RPC连接失败: ${error.message}`);
+                }
+            }
+
+            async testBalanceQuery() {
+                const testAddress = '0x742d35Cc6634C0532925a3b8D4C0C1e9C6d5b7e9';
+                const rpcEndpoint = 'https://rpc.mainnet.taraxa.io';
+
+                try {
+                    const response = await fetch(rpcEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: 'eth_getBalance',
+                            params: [testAddress, 'latest'],
+                            id: 1
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(`RPC错误: ${data.error.message}`);
+                    }
+
+                    if (!data.result || !data.result.startsWith('0x')) {
+                        throw new Error('无效的余额格式');
+                    }
+
+                    const balance = parseInt(data.result, 16) / Math.pow(10, 18);
+                    return { message: `余额查询功能正常，测试地址余额: ${balance.toFixed(6)} TARA` };
+
+                } catch (error) {
+                    throw new Error(`余额查询失败: ${error.message}`);
+                }
+            }
+
+            testLocalStorage() {
+                try {
+                    const testKey = 'test-key';
+                    const testValue = { test: 'data', timestamp: Date.now() };
+                    
+                    // 测试写入
+                    localStorage.setItem(testKey, JSON.stringify(testValue));
+                    
+                    // 测试读取
+                    const retrieved = JSON.parse(localStorage.getItem(testKey));
+                    
+                    if (retrieved.test !== testValue.test) {
+                        throw new Error('数据读写不一致');
+                    }
+                    
+                    // 清理测试数据
+                    localStorage.removeItem(testKey);
+                    
+                    return { message: '本地存储功能正常' };
+                } catch (error) {
+                    throw new Error(`本地存储测试失败: ${error.message}`);
+                }
+            }
+
+            testAnimations() {
+                try {
+                    // 测试Anime.js是否加载
+                    if (typeof anime === 'undefined') {
+                        throw new Error('Anime.js未加载');
+                    }
+
+                    // 测试CSS动画支持
+                    const testElement = document.createElement('div');
+                    testElement.style.animation = 'test 1s';
+                    document.body.appendChild(testElement);
+                    
+                    const animationSupported = testElement.style.animationName === 'test';
+                    document.body.removeChild(testElement);
+                    
+                    if (!animationSupported) {
+                        throw new Error('CSS动画不支持');
+                    }
+
+                    return { message: '动画系统功能正常' };
+                } catch (error) {
+                    throw new Error(`动画测试失败: ${error.message}`);
+                }
+            }
+
+            showSummary() {
+                const passed = document.querySelectorAll('.test-pass').length;
+                const failed = document.querySelectorAll('.test-fail').length;
+                const total = this.tests.length;
+
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'mt-6 p-4 glass-effect rounded-lg text-center';
+                summaryDiv.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-2">测试完成</h3>
+                    <div class="text-gray-300">
+                        总计: ${total} | 
+                        <span class="text-green-400">通过: ${passed}</span> | 
+                        <span class="text-red-400">失败: ${failed}</span>
+                    </div>
+                    <div class="mt-2 text-sm ${passed === total ? 'text-green-400' : 'text-yellow-400'}">
+                        ${passed === total ? '所有测试通过！应用功能正常。' : '部分测试失败，请检查相关功能。'}
+                    </div>
+                `;
+
+                document.querySelector('.glass-effect').appendChild(summaryDiv);
+
+                // 添加动画
+                anime({
+                    targets: summaryDiv,
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 500,
+                    easing: 'easeOutQuart'
+                });
+            }
+        }
+
+        // 初始化测试运行器
+        document.addEventListener('DOMContentLoaded', () => {
+            new TestRunner();
+        });
+    </script>
+</body>
+</html>

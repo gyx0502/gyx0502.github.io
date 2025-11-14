@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - Taraxa区块链账户查询器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a365d 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #319795, #ed8936);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .network-bg {
+            background-image: url('resources/network-bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="network-bg">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="resources/taraxa-logo.png" alt="Taraxa" class="h-8 w-auto mr-3">
+                    <h1 class="text-xl font-bold text-white">Taraxa查询器</h1>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-white hover:text-teal-300 transition-colors">首页</a>
+                    <a href="about.html" class="text-teal-300 font-medium">关于</a>
+                    <a href="history.html" class="text-white hover:text-teal-300 transition-colors">历史记录</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden glass-effect">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="block px-3 py-2 text-white hover:text-teal-300">首页</a>
+                <a href="about.html" class="block px-3 py-2 text-teal-300 font-medium">关于</a>
+                <a href="history.html" class="block px-3 py-2 text-white hover:text-teal-300">历史记录</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-20 pb-12">
+        <!-- Hero区域 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 floating-animation">
+                        关于Taraxa区块链查询器
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                        专业的Taraxa区块链账户查询服务，为您提供准确、实时的账户信息
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 项目介绍 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-effect rounded-2xl p-8 mb-12">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-3xl font-bold text-white mb-6">项目简介</h2>
+                            <p class="text-gray-300 text-lg mb-6">
+                                Taraxa区块链账户查询器是一个专为Taraxa网络设计的专业查询工具。通过直接连接Taraxa官方RPC节点，
+                                为用户提供准确、实时的账户余额查询服务。
+                            </p>
+                            <p class="text-gray-300 text-lg mb-6">
+                                我们的目标是降低普通用户与区块链技术之间的门槛，让每个人都能轻松查询和理解自己的数字资产。
+                                无论是开发者、投资者还是普通用户，都能通过我们的工具快速获取所需的账户信息。
+                            </p>
+                            <div class="flex flex-wrap gap-4">
+                                <span class="bg-teal-500 bg-opacity-20 text-teal-300 px-3 py-1 rounded-full text-sm">实时查询</span>
+                                <span class="bg-orange-500 bg-opacity-20 text-orange-300 px-3 py-1 rounded-full text-sm">准确可靠</span>
+                                <span class="bg-blue-500 bg-opacity-20 text-blue-300 px-3 py-1 rounded-full text-sm">用户友好</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <img src="resources/taraxa-logo.png" alt="Taraxa Logo" class="w-64 h-64 mx-auto mb-6 floating-animation">
+                            <div class="gradient-text text-2xl font-bold">Taraxa生态系统</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心特性 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-white mb-4">核心特性</h2>
+                    <p class="text-xl text-gray-300">我们为用户提供专业、可靠的区块链查询服务</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glass-effect rounded-xl p-6 feature-card">
+                        <div class="text-teal-400 text-4xl mb-4">⚡</div>
+                        <h3 class="text-xl font-bold text-white mb-3">实时数据</h3>
+                        <p class="text-gray-300">
+                            直接连接Taraxa官方RPC节点，确保查询结果的实时性和准确性。
+                            平均响应时间低于500ms，为用户提供极速查询体验。
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 feature-card">
+                        <div class="text-teal-400 text-4xl mb-4">🔒</div>
+                        <h3 class="text-xl font-bold text-white mb-3">安全可靠</h3>
+                        <p class="text-gray-300">
+                            采用官方API接口，无需用户提供私钥或敏感信息。
+                            所有查询操作只读，确保用户资产安全。
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 feature-card">
+                        <div class="text-teal-400 text-4xl mb-4">📊</div>
+                        <h3 class="text-xl font-bold text-white mb-3">数据可视化</h3>
+                        <p class="text-gray-300">
+                            清晰的余额展示界面，支持多种单位显示。
+                            提供查询历史记录和网络状态监控。
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 feature-card">
+                        <div class="text-teal-400 text-4xl mb-4">🌐</div>
+                        <h3 class="text-xl font-bold text-white mb-3">多网络支持</h3>
+                        <p class="text-gray-300">
+                            支持Taraxa主网和测试网查询，满足不同用户的需求。
+                            可轻松切换网络环境，方便开发测试。
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 feature-card">
+                        <div class="text-teal-400 text-4xl mb-4">💾</div>
+                        <h3 class="text-xl font-bold text-white mb-3">历史记录</h3>
+                        <p class="text-gray-300">
+                            自动保存查询历史，方便用户回顾和比较。
+                            支持快速重新查询，提升使用效率。
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 feature-card">
+                        <div class="text-teal-400 text-4xl mb-4">📱</div>
+                        <h3 class="text-xl font-bold text-white mb-3">响应式设计</h3>
+                        <p class="text-gray-300">
+                            完美适配各种设备屏幕，无论是桌面、平板还是手机，
+                            都能获得最佳的查询体验。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技术架构 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-effect rounded-2xl p-8">
+                    <h2 class="text-3xl font-bold text-white mb-8 text-center">技术架构</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6">前端技术</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-teal-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">HTML5 + CSS3 + JavaScript ES6+</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-teal-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">Tailwind CSS 响应式设计</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-teal-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">Anime.js 动画效果</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-teal-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">PIXI.js 粒子系统</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-teal-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">ECharts.js 数据可视化</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6">区块链集成</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">JSON-RPC 2.0 协议</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">eth_getBalance 查询接口</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">Taraxa官方RPC节点</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">实时区块数据同步</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
+                                    <span class="text-gray-300">错误处理和重试机制</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 使用指南 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-white mb-4">使用指南</h2>
+                    <p class="text-xl text-gray-300">简单几步，快速查询您的Taraxa账户余额</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-white text-2xl font-bold">1</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">输入地址</h3>
+                        <p class="text-gray-300">
+                            在查询框中输入您的Taraxa钱包地址，系统会自动验证地址格式。
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-white text-2xl font-bold">2</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">点击查询</h3>
+                        <p class="text-gray-300">
+                            点击"查询余额"按钮，系统将连接到Taraxa网络获取最新数据。
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-white text-2xl font-bold">3</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">查看结果</h3>
+                        <p class="text-gray-300">
+                            查询结果将显示您的账户余额，包括TARA数量和相关信息。
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-white text-2xl font-bold">4</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">历史记录</h3>
+                        <p class="text-gray-300">
+                            查询记录会自动保存，方便您随时查看历史查询信息。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于Taraxa -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-effect rounded-2xl p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-3xl font-bold text-white mb-6">关于Taraxa</h2>
+                            <p class="text-gray-300 text-lg mb-6">
+                                Taraxa是一个高性能的区块链平台，采用创新的blockDAG架构，结合权益证明(PoS)共识机制，
+                                为商业应用提供可扩展、安全、高效的解决方案。
+                            </p>
+                            <p class="text-gray-300 text-lg mb-6">
+                                Taraxa网络完全兼容以太坊虚拟机(EVM)，支持智能合约和去中心化应用，
+                                同时提供比传统区块链更高的吞吐量和更低的交易费用。
+                            </p>
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-teal-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-300">高性能blockDAG架构</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-teal-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-300">EVM完全兼容</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-teal-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-300">低交易费用</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-teal-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-gray-300">去中心化治理</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="glass-effect rounded-xl p-6 mb-6">
+                                <h3 class="text-2xl font-bold text-white mb-4">网络信息</h3>
+                                <div class="space-y-3 text-left">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">网络名称:</span>
+                                        <span class="text-white">Taraxa Mainnet</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">链ID:</span>
+                                        <span class="text-white">841</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">代币符号:</span>
+                                        <span class="text-white">TARA</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">RPC端点:</span>
+                                        <span class="text-white text-sm truncate">https://rpc.mainnet.taraxa.io</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="https://taraxa.io" target="_blank" class="inline-block bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg transition-colors">
+                                访问Taraxa官网
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系我们 -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-effect rounded-2xl p-8 text-center">
+                    <h2 class="text-3xl font-bold text-white mb-6">联系我们</h2>
+                    <p class="text-gray-300 text-lg mb-8">
+                        如果您在使用过程中遇到任何问题，或有任何建议和反馈，欢迎与我们联系
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <div class="text-teal-400 text-3xl mb-4">📧</div>
+                            <h3 class="text-xl font-bold text-white mb-2">邮件支持</h3>
+                            <p class="text-gray-300">support@taraxa-query.com</p>
+                        </div>
+                        <div>
+                            <div class="text-teal-400 text-3xl mb-4">💬</div>
+                            <h3 class="text-xl font-bold text-white mb-2">在线客服</h3>
+                            <p class="text-gray-300">工作日 9:00-18:00</p>
+                        </div>
+                        <div>
+                            <div class="text-teal-400 text-3xl mb-4">🐛</div>
+                            <h3 class="text-xl font-bold text-white mb-2">问题反馈</h3>
+                            <p class="text-gray-300">GitHub Issues</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="glass-effect py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-4">
+                    <img src="resources/taraxa-logo.png" alt="Taraxa" class="h-6 w-auto mr-2">
+                    <span class="text-white font-bold">Taraxa区块链查询器</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    © 2024 Taraxa区块链账户查询器. 为Taraxa生态系统提供专业查询服务
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单功能
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为卡片添加进入动画
+            const cards = document.querySelectorAll('.feature-card, .glass-effect');
+            cards.forEach((card, index) => {
+                anime({
+                    targets: card,
+                    translateY: [50, 0],
+                    opacity: [0, 1],
+                    duration: 800,
+                    delay: index * 100,
+                    easing: 'easeOutQuart'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
